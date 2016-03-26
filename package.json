@@ -1,0 +1,22 @@
+{
+  "name": "clawer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shineliuhzz/Clawer.git"
+  },
+  "keywords": [
+    "clawer"
+  ],
+  "author": "liuhzz",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shineliuhzz/Clawer/issues"
+  },
+  "homepage": "https://github.com/shineliuhzz/Clawer#readme"
+}

@@ -1,7 +1,9 @@
 /*
 * author:liuhzz
+*
 * 2016/03/26
-* */
+*
+ */
 
 var async = require("async");
 
@@ -55,30 +57,26 @@ function htmlHandle (html) {
 
     ep.after("fetchUrl", lists.length, function (results) {
 
-        results.forEach(function (item, index) {
+        results = results.forEach(function (item,index) {
 
             logger("目前正在抓取第" + index + "条, url是" + item[0]);
 
-        });
-
-        results = results.map(function (item) {
-
-            return item[1];
-
-        });
-
-        results.forEach(function (item,index) {
-
-            var $ = cheerio.load(item);
+            var $ = cheerio.load(item[1]);
 
             var mp3Url = $("#mp3").attr("href");
 
-            logger(mp3Url);
+            http.get(mp3Url, function (res) {
 
-        })
+                initDir((index+1).toString());
 
+            }).on("error", function (e) {
 
+                logger("错误:" + e);
+
+            })
+        });
     });
+
 
     lists.forEach(function (index) {
 
@@ -105,6 +103,20 @@ function htmlHandle (html) {
     });
 }
 
+
+function initDir(name){
+
+    try{
+
+        fs.readdirSync(name);
+
+    }catch(e){
+
+        if(e.errno === -2)
+
+            fs.mkdirSync(name);
+    }
+}
 
 function logger(context){
 

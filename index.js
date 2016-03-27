@@ -67,7 +67,15 @@ function htmlHandle (html) {
 
             http.get(mp3Url, function (res) {
 
-                initDir((index+1).toString());
+                initDir((index).toString());
+
+                res.on("data", function () {
+
+                    var writeStream = fs.createWriteStream((index).toString()+"/"+ index,{flags:'w'});
+
+                   res.pipe(writeStream);
+
+                });
 
             }).on("error", function (e) {
 
@@ -77,11 +85,9 @@ function htmlHandle (html) {
         });
     });
 
-
     lists.forEach(function (index) {
 
         http.get(index, function(res){
-
 
             var  sonHtml = "";
 

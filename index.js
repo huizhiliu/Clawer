@@ -13,26 +13,30 @@ var fs = require("fs");
 
 var Eventproxy =  require("eventproxy");
 
-var url = "http://www.51voa.com/VOA_Standard_1.html";
+var url = require("url");
 
-var currentCount = 0;
+var urls = "http://www.51voa.com/VOA_Standard_1.html";
 
-http.get(url, function (res) {
+http.get(urls, function (res) {
 
     var html = "";
 
     res.on("data", function (chunk) {
+
         html += chunk;
     });
 
     res.on("end", function () {
+
         htmlHandle(html);
+
     });
+
 }).on("error", function (e) {
 
-   console.log("错误:" + e.message);
+   logger("错误:" + e.message);
 
-})
+});
 
 function htmlHandle (html) {
 
@@ -42,62 +46,73 @@ function htmlHandle (html) {
 
     lists = lists.map(function (index,item) {
 
-        return item.attribs.href;
+        return url.resolve("http://www.51voa.com" ,item.attribs.href);
     });
 
     lists = Array.prototype.slice.call(lists);
 
-    var ep = new Eventproxy();
+    var ep = new Eventproxy();      //跳出回调深坑
 
-    ep.after("fetchUrl", lists.length, function () {
+    ep.after("fetchUrl", lists.length, function (results) {
+
+        results.forEach(function (item, index) {
+
+            logger("目前正在抓取第" + index + "条, url是" + item[0]);
+
+        });
+
+        results = results.map(function (item) {
+
+            return item[1];
+
+        });
+
+        results.forEach(function (item,index) {
+
+            var $ = cheerio.load(item);
+
+            var mp3Url = $("#mp3").attr("href");
+
+            logger(mp3Url);
+
+        })
+
 
     });
 
     lists.forEach(function (index) {
+
         http.get(index, function(res){
 
+
+            var  sonHtml = "";
+
+            res.on("data", function (data) {
+
+                sonHtml += data;
+            });
+
+            res.on("end", function () {
+
+                ep.emit("fetchUrl", [index,sonHtml]);
+            })
+
         }).on("error",function(e){
-            console.log("错误:"+e);
+
+           logger("错误:"+e);
+
         })
-    })
-
-    //async.mapLimit(lists, 5, function(list,cb){  //TODO
-    //
-    //    fetchUrl(list,cb)
-    //
-    //},function(err,results){
-    //    log("finals");
-    //    log(results);
-    //})
+    });
 }
 
 
-function log(){
+function logger(context){
 
-    console.log.bind(console,arguments);
+    console.log.apply(console,[context]);
+
 }
 
-//function fetchUrl(url, callback) {  //TODO
-//
-//    currentCount++;
-//
-//    log("现在正在抓去第:"+currentCount+",抓去的url是"+url);
-//
-//    http.get(url, function (res) {
-//        var sonHtml = "";
-//
-//        res.on("data", function (data) {
-//            sonHtml += data;
-//        });
-//
-//        res.on("end", function () {
-//            callback(null, sonHtml);
-//        })
-//    }).on("error", function (e) {
-//        console.log("错误是:" + e);
-//    })
-//
-//}
+
 
 
 

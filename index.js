@@ -51,7 +51,6 @@ function htmlHandle (html) {
                    res.pipe(writeStream);
                 });
             }).on("error", function (e) {
-
                 logger("错误:" + e);
             })
         });

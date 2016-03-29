@@ -5,8 +5,6 @@
 *
  */
 
-var async = require("async");
-
 var cheerio = require("cheerio");
 
 var http = require("http");
@@ -39,7 +37,7 @@ function htmlHandle (html) {
     });
     lists = Array.prototype.slice.call(lists);
     var ep = new Eventproxy();      //跳出回调深坑
-    ep.after("fetchUrl", lists.length, function (results) {
+    ep.after("fetchUrl", lists.length, function (results) {  //注册事件
         results.forEach(function (item,index) {
             logger("目前正在抓取第" + index + "条, url是" + item[0]);
             var $ = cheerio.load(item[1]);
@@ -63,7 +61,7 @@ function htmlHandle (html) {
                 sonHtml += data;
             });
             res.on("end", function () {
-                ep.emit("fetchUrl", [index,sonHtml]);
+                ep.emit("fetchUrl", [index,sonHtml]); //发射
             })
         }).on("error",function(e){
            logger("错误:"+e);

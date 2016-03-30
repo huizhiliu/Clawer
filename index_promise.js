@@ -48,9 +48,8 @@ function htmlHandle(html){
     urls.forEach(function(item){
         lists.push(fetchUrl(item));
     });
-    //logger(lists);
     Q.all(lists).then(function(results){
-        //console.log(results.status)
+        console.log(results)
     });
 };
 function logger(context){

@@ -36,6 +36,7 @@ function htmlHandle (html) {
         return url.resolve("http://www.51voa.com" ,item.attribs.href);
     });
     lists = Array.prototype.slice.call(lists);
+    logger(lists[1]);
     var ep = new Eventproxy();      //跳出回调深坑
     ep.after("fetchUrl", lists.length, function (results) {  //注册事件
         results.forEach(function (item,index) {
